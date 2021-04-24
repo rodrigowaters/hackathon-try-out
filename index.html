@@ -37,22 +37,28 @@
               response.response.forEach(function (objecto, index) {
                 const nome = objecto.name
                 const score = Math.round(objecto.score * 100, 2)
-                pre += `<p class="produto-${index}" style="padding-left: 20px">${ score }% - ${ nome }</p>`
+                pre += `<p index="${index}" class="produto-${index}" style="padding-left: 20px">${ score }% - ${ nome }</p>`
 
                 const vertices = objecto.vertices
                 const l = denormalizeVertices_(vertices)
                 const svgD = 'M' + l[ 0 ].x + ' ' + l[ 0 ].y + '\n              L' + l[ 1 ].x + ' ' + l[ 1 ].y + '\n              L' +
                   l[ 2 ].x + ' ' + l[ 2 ].y + '\n              L' + l[ 3 ].x + ' ' + l[ 3 ].y + ' Z'
 
-                const a = `<svg class="square-${index}" viewbox="0 0 440 550" width="440" height="550" style="position: absolute; top: 110px">
-              <path fill="none" stroke="#76FF03" d="${ svgD }" style="stroke-width:1px;"></path>
+                const a = `<svg class="hoverP square-${index}" viewbox="0 0 440 550" width="440" height="550" style="position: absolute; top: 110px">
+                <path id="path-${index}" fill="none" stroke="#76FF03" d="${ svgD }" style="stroke-width:1px;"></path>
+                <text>
+                    <textPath href="#path-${index}">${nome}</textPath>
+                  </text>
             </svg>`
 
-                console.log({ a })
                 $('#image-area').append(a)
 
               })
-              $('pre').html(pre)
+              $('pre').html(pre).find('p').hover(function (){
+                $('.hoverP').removeClass('hover');
+                const index = $(this).attr('index');
+                $(`.square-${index}`).addClass('hover')
+              });
         })
         .catch(console.log);
 
@@ -75,25 +81,6 @@
       }
     }
 
-    function generateSquare (start, end) {
-
-      var newLine = document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      // newLine.setAttribute('id','line2');
-      newLine.setAttribute('x1', '0')
-      newLine.setAttribute('y1', '0')
-      newLine.setAttribute('x2', start * 100)
-      newLine.setAttribute('y2', end * 100)
-      newLine.setAttribute('stroke', 'black')
-      $('svg').append(newLine)
-
-      // var c = document.getElementById('canvas')
-      // var ctx = c.getContext('2d')
-      // ctx.beginPath()
-      // ctx.moveTo(0, 0)
-      // ctx.lineTo(start * 100, end * 100)
-      // ctx.stroke()
-    }
-
     function denormalizeVertices_ (normalizedVertices) {
 
       const width = $('#blah').innerWidth()
@@ -106,3 +93,11 @@
     }
   })
 </script>
+<style>
+    .hover path{
+        stroke-width: 5px !important;
+    }
+    pre p:hover{
+        cursor: pointer !important;
+    }
+</style>
